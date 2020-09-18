@@ -26,6 +26,12 @@ const generateItemElement = function (item) {
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
         </button>
+          <form>
+          <input type='text' class='js-item-name-change'>
+          <button class="js-item-name-change-button">
+            <span class='button-label'>Change Item</span>
+          </button>
+          </form>
       </div>
     </li>`;
 };
@@ -65,6 +71,25 @@ const render = function () {
 const addItemToShoppingList = function (itemName) {
   store.items.push({ id: cuid(), name: itemName, checked: false });
 };
+
+const changeItemName = (newItemName, id) => {
+  store.items = store.items.map( item => item.id !== id? item:
+    { id,
+      name: newItemName,
+      checked: item.checked
+    });
+}
+
+const handleChangeItemName = () => {
+  $('.shopping-list').on('click', '.js-item-name-change-button', (e) => {
+    e.preventDefault();
+    const newItemName = $(e.currentTarget).siblings('input[type="text"]').val();
+    const id = $(e.target).closest('li.js-item-element').attr('data-item-id');
+    changeItemName(newItemName, id);
+    
+    render();
+  });
+}
 
 const handleNewItemSubmit = function () {
   $('#js-shopping-list-form').submit(function (event) {
@@ -156,6 +181,7 @@ const handleToggleFilterClick = function () {
  */
 const handleShoppingList = function () {
   render();
+  handleChangeItemName();
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
